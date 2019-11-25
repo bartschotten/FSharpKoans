@@ -58,8 +58,34 @@ module ``about the stock example`` =
     // tests for yourself along the way. You can also try 
     // using the F# Interactive window to check your progress.
 
+    let stockDataWithoutHeaders = stockData.Tail
+
+    let splitCommas (x:string) = x.Split([|','|])
+
+    let listOfArrays = List.map splitCommas stockDataWithoutHeaders
+
+    let toDouble x = System.Double.Parse(x)
+
+    let toTupleOfRelevantValues (x: string []) = 
+        let date = x.[0]
+        let opening = toDouble(x.[1])
+        let close = toDouble(x.[4])
+        (date, opening, close)
+
+    let listOfTuples = List.map toTupleOfRelevantValues listOfArrays
+
+    let toTupleWithAbsDifference (date, opening, close) =
+        let absDifference = abs(opening - close)
+        (date, absDifference)
+
+    let listOfTuplesWithDiff = List.map toTupleWithAbsDifference listOfTuples
+
+    let dateWithMaxDifference x = 
+        let absDifference x = snd x
+        Seq.maxBy absDifference x |> fst
+
     [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
+        let result = dateWithMaxDifference listOfTuplesWithDiff
         
         AssertEquality "2012-03-13" result
